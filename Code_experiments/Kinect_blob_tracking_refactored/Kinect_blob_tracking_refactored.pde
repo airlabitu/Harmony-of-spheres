@@ -1,3 +1,6 @@
+// This code is made by Halfdan Hauch Jense (halj@itu.dk) at AIR LAB ITU
+// The code is using Daniel Shiffmans blob detection class, with a few alterations.
+
 // Daniel Shiffman
 // http://codingtra.in
 // http://patreon.com/codingtrain
@@ -5,14 +8,10 @@
 
 
 // ToDo
-// Lav visninger og info
-  // herunder forskellige billedvisninger, blob overlay, tekstinfo
+// Bedre formatering af info
 // Lav "blind spot" interface
-// lave save / load settings
 // (Lav således at man kan lave standard blob detection på farvebillede som Shifmann havde tiltænkt det)
 
-
-//import processing.video.*;
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
 
@@ -24,7 +23,6 @@ boolean drawBlobs = true;
 
 void setup() {
   size(640,480);
-  
 }
 
 
@@ -33,25 +31,26 @@ void draw() {
   
   t.detectBlobs(); // update the tracker
   image(t.getTrackerImage(image), 0, 0); // display one of the images from the tracker
-  if (drawBlobs) t.showBlobs(); // display tracked blobs 
+  if (drawBlobs) t.showBlobs(); // display tracked blobs
+  drawInfo(); // on screen text info
 }
 
 void drawInfo(){
   stroke(255);
   if (textInfo){    
     fill(0);
-    rect(80, 130, 460, 240);
+    rect(90, 130, 460, 150);
     textSize(15);
     textAlign(LEFT);
     fill(255);
-    text("Min depth :         [" + t.getMinDepth() + "]              decrease (1) / increase (2)", 100, 160);
-    text("Max depth :        [" + t.getMaxDepth() + "]          decrease (3) / increase (4)", 100, 180);
-    text("Threshold :         [" + t.getThreshold() + "]           decrease (5) / increase (6)", 100, 200);
-    text("Dist threshold :   [" + t.getDistThreshold() + "]           decrease (7) / increase (8)", 100, 220);
-    if (image == 0) text("Image :               [tracker]        toggel (i)", 100, 240);
-    else if (image == 1) text("Image :               [kinect]         toggel (i)", 100, 240);
-    if (drawBlobs) text("Blobs overlay :    [yes]              toggel (b)", 100, 260);
-    else text("Blobs overlay :    [no]               toggel (b)", 100, 260);
+    text("Min depth :         [" + t.getMinDepth() + "]              decrease (1) / increase (2)", 110, 160);
+    text("Max depth :        [" + t.getMaxDepth() + "]          decrease (3) / increase (4)", 110, 180);
+    text("Threshold :         [" + t.getThreshold() + "]           decrease (5) / increase (6)", 110, 200);
+    text("Dist threshold :   [" + t.getDistThreshold() + "]           decrease (7) / increase (8)", 110, 220);
+    if (image == 0) text("Image :               [tracker]        toggel (i)", 110, 240);
+    else if (image == 1) text("Image :               [kinect]         toggel (i)", 110, 240);
+    if (drawBlobs) text("Blobs overlay :    [yes]              toggel (b)", 110, 260);
+    else text("Blobs overlay :    [no]               toggel (b)", 110, 260);
   }
   fill(0);
   rect(0, height-30, 170, 30);
@@ -135,8 +134,6 @@ void keyPressed() {
   }
   
 }
-
-
 
 
 float distSq(float x1, float y1, float x2, float y2) {
