@@ -1,15 +1,9 @@
 class Tracker{
   
   Kinect kinect;
-
-  //Capture video;
   
   // Depth image
-  //PImage depthImg;
-  //PImage video;
   PImage trackerDataMap;
-  //PImage inputImage;
-  // Which pixels do we care about?
   int minDepth =  60; // 60
   int maxDepth = 1000; //1000;
   //float angle;
@@ -23,20 +17,12 @@ class Tracker{
   float distThreshold = 50;
   
   ArrayList<Blob> blobs = new ArrayList<Blob>();
-    
   
   Tracker(PApplet this_){
     trackColor = color(255);
-  
-    
     kinect = new Kinect(this_);
     kinect.initDepth();
-    //kinect.initVideo();
     //angle = kinect.getTilt();
-  
-    // Blank image
-    //depthImg = new PImage(kinect.width, kinect.height);
-    //video = new PImage(kinect.width, kinect.height);
     trackerDataMap = new PImage(kinect.width, kinect.height);
   }
   
@@ -203,14 +189,11 @@ class Tracker{
     threshold -= step;
   }
   
-  
-  
   void setDistThreshold(float distThreshold_){
     distThreshold = distThreshold_;
     for (int i = 0; i < blobs.size(); i++){
       blobs.get(i).distThreshold = distThreshold;
     }
-    
   }
   
   float getDistThreshold(){
@@ -252,9 +235,6 @@ class Tracker{
   void decreaseMaxDepth(int step){
     maxDepth = constrain(maxDepth-step, minDepth, 2047);
   }
-  
-  
-
   
   
   // Draw all blobs

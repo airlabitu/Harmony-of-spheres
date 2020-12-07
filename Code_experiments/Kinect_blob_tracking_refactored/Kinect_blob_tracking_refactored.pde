@@ -5,10 +5,8 @@
 
 
 // ToDo
-// Aflsut image / input håndtering i Tracker klassen
-// Lav visninger og info udenfor klasser
+// Lav visninger og info
   // herunder forskellige billedvisninger, blob overlay, tekstinfo
-// Ret fejl i blob klassen
 // (Lav således at man kan lave standard blob detection på farvebillede som Shifmann havde tiltænkt det)
 
 
