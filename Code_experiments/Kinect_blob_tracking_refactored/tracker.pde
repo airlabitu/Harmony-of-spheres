@@ -4,7 +4,7 @@ class Tracker{
   
   // Depth image
   PImage trackerDataMap;
-  int minDepth =  60; // 60
+  private int minDepth =  60; // 60
   int maxDepth = 1000; //1000;
   //float angle;
   

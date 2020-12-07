@@ -7,6 +7,8 @@
 // ToDo
 // Lav visninger og info
   // herunder forskellige billedvisninger, blob overlay, tekstinfo
+// Lav "blind spot" interface
+// lave save / load settings
 // (Lav således at man kan lave standard blob detection på farvebillede som Shifmann havde tiltænkt det)
 
 
@@ -29,75 +31,69 @@ void setup() {
 void draw() {
   background(0);
   
-  // update tracker
-  // get blobs from tracker
-  // draw tracking image / information (maybe)
-  // do stuff with the blob list
-  
-  // Draw the raw image
-  t.detectBlobs();
-  image(t.getTrackerImage(image), 0, 0);
-  //image(t.getTrackerImage(1), 640, 0);
-  //image(kinect.getDepthImage(), 0, 0);
-  if (drawBlobs) t.showBlobs();
-  if (textInfo){
-    
+  t.detectBlobs(); // update the tracker
+  image(t.getTrackerImage(image), 0, 0); // display one of the images from the tracker
+  if (drawBlobs) t.showBlobs(); // display tracked blobs 
+}
+
+void drawInfo(){
+  stroke(255);
+  if (textInfo){    
     fill(0);
     rect(80, 130, 460, 240);
     textSize(15);
     textAlign(LEFT);
     fill(255);
-    text("Min depth : " + t.getMinDepth() + " decrease (1) / increase (2)", 100, 160);
-    text("Max depth : " + t.getMaxDepth() + " decrease (3) / increase (4)", 100, 180);
-    text("Threshold : " + t.getThreshold() + " decrease (5) / increase (6)", 100, 200);
-    text("Dist threshold : " + t.getDistThreshold() + " decrease (7) / increase (8)", 100, 220);
+    text("Min depth :         [" + t.getMinDepth() + "]              decrease (1) / increase (2)", 100, 160);
+    text("Max depth :        [" + t.getMaxDepth() + "]          decrease (3) / increase (4)", 100, 180);
+    text("Threshold :         [" + t.getThreshold() + "]           decrease (5) / increase (6)", 100, 200);
+    text("Dist threshold :   [" + t.getDistThreshold() + "]           decrease (7) / increase (8)", 100, 220);
+    if (image == 0) text("Image :               [tracker]        toggel (i)", 100, 240);
+    else if (image == 1) text("Image :               [kinect]         toggel (i)", 100, 240);
+    if (drawBlobs) text("Blobs overlay :    [yes]              toggel (b)", 100, 260);
+    else text("Blobs overlay :    [no]               toggel (b)", 100, 260);
   }
+  fill(0);
+  rect(0, height-30, 170, 30);
+  fill(255);
+  if (textInfo) text("press 't' to close info", 10, height-10);
+  else text("press 't' to open info", 10, height-10);
+}
 
-  
-  /*
-  fill(255,0,0);
-  textSize(15);
-  textAlign(LEFT);
+void saveSettings(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("Save to filke " + selection.getAbsolutePath());
+    String [] settings = new String [6];
+    settings[0] = ""+t.minDepth;
+    settings[1] = ""+t.maxDepth;
+    settings[2] = ""+t.threshold;
+    settings[3] = ""+t.distThreshold;
+    settings[4] = ""+image;
+    settings[5] = ""+drawBlobs;
+    saveStrings(selection.getAbsolutePath(), settings);
+  }
+}
 
-  //text("TILT: " + angle, 700, 500);
-  text("THRESHOLD: [" + t.getMinDepth() + ", " + t.getMaxDepth() + "]", 700, 530);
-  
-  
-  
-  //video.loadPixels();
-  //image(video, 0, 0);
-
- 
-
-
-
-
-  
-
-  textAlign(LEFT);
-  fill(0, 255,0);
-  //text(currentBlobs.size(), width-10, 40);
-  //text(blobs.size(), width-10, 80);
-  textSize(15);
-  text("color threshold: " + t.getThreshold(), 700, 600);  
-  text("distance threshold: " + t.getDistThreshold(), 700, 630);
-  */
-  
+void loadSettings(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    println("Load file " + selection.getAbsolutePath());
+    String [] settings = loadStrings(selection.getAbsolutePath());
+    t.setMinDepth(int(settings[0]));
+    t.setMaxDepth(int(settings[1]));
+    t.setThreshold(float(settings[2]));
+    t.setDistThreshold(float(settings[3]));
+    image = int(settings[4]);
+    drawBlobs = boolean(settings[5]);
+  }
 }
 
 void keyPressed() {
-
   
-  if (key == CODED) {
-    if (keyCode == UP) {
-      //angle++;
-    } else if (keyCode == DOWN) {
-      //angle--;
-    }
-    //angle = constrain(angle, 0, 30);
-    //kinect.setTilt(angle);
-  } 
-  else if (key == '1') {
+  if (key == '1') {
     t.decreaseMinDepth(5);//minDepth = constrain(minDepth+10, 0, maxDepth);
   } 
   else if (key == '2') {
@@ -121,7 +117,6 @@ void keyPressed() {
   else if (key == '8') {
     t.increaseDistThreshold(5);
   }
-  
   else if (key == 'i') {
     image++;
     if (image == 2) image = 0;
@@ -129,8 +124,14 @@ void keyPressed() {
   else if (key == 't') {
     textInfo=!textInfo;
   }
-    else if (key == 'b') {
+  else if (key == 'b') {
     drawBlobs=!drawBlobs;
+  }
+  else if (key == 's') {
+    selectOutput("Select a file to write to:", "saveSettings");
+  }
+  else if (key == 'l') {
+    selectInput("Select a file to load from:", "loadSettings");
   }
   
 }
