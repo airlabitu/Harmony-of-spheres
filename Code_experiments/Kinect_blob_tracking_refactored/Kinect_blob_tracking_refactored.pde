@@ -8,9 +8,14 @@
 
 
 // ToDo
-// Bedre formatering af info
-// Lav "blind spot" interface
-// (Lav således at man kan lave standard blob detection på farvebillede som Shifmann havde tiltænkt det)
+  // Lav "blind spot" interface
+    // Liste med blind-spots
+    // Mulighed for at vælge størrelse på blind-spot når et nyt laves
+    // Tilføj til load / save funktioner
+  // Lav OSC output interface
+    // set IP i settingsfil
+    // Enable disable i textInfo interface
+  // (Lav således at man kan lave standard blob detection på farvebillede som Shifmann havde tiltænkt det)
 
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
@@ -29,12 +34,12 @@ void setup() {
 
 void draw() {
   background(0);
-  
   t.detectBlobs(); // update the tracker
   image(t.getTrackerImage(image), 0, 0); // display one of the images from the tracker
   if (drawBlobs) t.showBlobs(); // display tracked blobs
   drawInfo(); // on screen text info
 }
+
 
 void drawInfo(){
   rectMode(CORNER);
