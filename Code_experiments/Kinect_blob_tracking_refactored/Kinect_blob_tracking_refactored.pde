@@ -1,4 +1,4 @@
-// This code is made by Halfdan Hauch Jense (halj@itu.dk) at AIR LAB ITU
+// This code is made by Halfdan Hauch Jensen (halj@itu.dk) at AIR LAB ITU
 // The code is using Daniel Shiffmans blob detection class, with a few alterations.
 
 // Daniel Shiffman
@@ -23,6 +23,7 @@ boolean drawBlobs = true;
 
 void setup() {
   size(640,480);
+  loadSettings("data/settings.txt"); // load default settings from file
 }
 
 
@@ -36,30 +37,42 @@ void draw() {
 }
 
 void drawInfo(){
+  rectMode(CORNER);
+  textAlign(LEFT);
+  textSize(15);
   stroke(255);
+  int firstCol = 90, secondCol = 280, thirdCol = 400;
+  int firstRow = 130, rowStep = 20;
+  
   if (textInfo){    
-    fill(0);
-    rect(90, 130, 460, 150);
-    textSize(15);
-    textAlign(LEFT);
+    fill(0, 150);
+    rect(firstCol-20, firstRow-20, 460, 250);
     fill(255);
-    text("Min depth :         [" + t.getMinDepth() + "]              decrease (1) / increase (2)", 110, 160);
-    text("Max depth :        [" + t.getMaxDepth() + "]          decrease (3) / increase (4)", 110, 180);
-    text("Threshold :         [" + t.getThreshold() + "]           decrease (5) / increase (6)", 110, 200);
-    text("Dist threshold :   [" + t.getDistThreshold() + "]           decrease (7) / increase (8)", 110, 220);
-    if (image == 0) text("Image :               [tracker]        toggel (i)", 110, 240);
-    else if (image == 1) text("Image :               [kinect]         toggel (i)", 110, 240);
-    if (drawBlobs) text("Blobs overlay :    [yes]              toggel (b)", 110, 260);
-    else text("Blobs overlay :    [no]               toggel (b)", 110, 260);
+    text("Min depth :", firstCol, firstRow+rowStep*1);   text("[" + t.getMinDepth() + "]", secondCol, firstRow+rowStep*1);  text("adjust (1) / (2)", thirdCol, firstRow+rowStep*1);
+    text("Max depth :", firstCol, firstRow+rowStep*2);   text("[" + t.getMaxDepth() + "]", secondCol, firstRow+rowStep*2);  text("adjust (3) / (4)", thirdCol, firstRow+rowStep*2);
+    text("Threshold :", firstCol, firstRow+rowStep*3);   text("[" + t.getThreshold() + "]", secondCol, firstRow+rowStep*3);  text("adjust (5) / (6)", thirdCol, firstRow+rowStep*3);
+    text("Dist threshold :", firstCol, firstRow+rowStep*4);   text("[" + t.getDistThreshold() + "]", secondCol, firstRow+rowStep*4);  text("adjust (7) / (8)", thirdCol, firstRow+rowStep*4);
+    
+    String imageString = "tracker";
+    if (image == 1) imageString = "kinect";
+    text("Image :", firstCol, firstRow+rowStep*6);   text("[" + imageString + "]", secondCol, firstRow+rowStep*6);  text("toggle (i)", thirdCol, firstRow+rowStep*6);
+    
+    String drawBlobsString = "yes";
+    if (!drawBlobs) drawBlobsString = "no";
+    text("Blobs overlay :", firstCol, firstRow+rowStep*7);   text("[" + drawBlobsString + "]", secondCol, firstRow+rowStep*7);  text("toggle (b)", thirdCol, firstRow+rowStep*7);
+    
+    text("Load & save settings :", firstCol, firstRow+rowStep*9);   text("press (l) / (s)", thirdCol, firstRow+rowStep*9);
+
   }
-  fill(0);
+  fill(0, 150);
   rect(0, height-30, 170, 30);
   fill(255);
   if (textInfo) text("press 't' to close info", 10, height-10);
   else text("press 't' to open info", 10, height-10);
 }
 
-void saveSettings(File selection) {
+// --- Load and Save funcrions ---
+void saveSettingsCallback(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
@@ -75,21 +88,27 @@ void saveSettings(File selection) {
   }
 }
 
-void loadSettings(File selection) {
+void loadSettingsCallback(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("Load file " + selection.getAbsolutePath());
-    String [] settings = loadStrings(selection.getAbsolutePath());
+    loadSettings(selection.getAbsolutePath());
+  }
+}
+
+void loadSettings(String path){
+    String [] settings = loadStrings(path);
     t.setMinDepth(int(settings[0]));
     t.setMaxDepth(int(settings[1]));
     t.setThreshold(float(settings[2]));
     t.setDistThreshold(float(settings[3]));
     image = int(settings[4]);
     drawBlobs = boolean(settings[5]);
-  }
 }
 
+
+// --- key commands ---
 void keyPressed() {
   
   if (key == '1') {
@@ -127,10 +146,10 @@ void keyPressed() {
     drawBlobs=!drawBlobs;
   }
   else if (key == 's') {
-    selectOutput("Select a file to write to:", "saveSettings");
+    selectOutput("Select a file to write to:", "saveSettingsCallback");
   }
   else if (key == 'l') {
-    selectInput("Select a file to load from:", "loadSettings");
+    selectInput("Select a file to load from:", "loadSettingsCallback");
   }
   
 }

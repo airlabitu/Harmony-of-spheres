@@ -1,7 +1,4 @@
-// Daniel Shiffman
-// http://codingtra.in
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/o1Ob28sF0N8
+
 
 class Blob {
   float minx;
@@ -42,17 +39,17 @@ class Blob {
 
 
   void show() {
-    stroke(0);
+    stroke(255,105,204);
     fill(255, lifespan);
     strokeWeight(2);
     rectMode(CORNERS);
     rect(minx, miny, maxx, maxy);
 
     textAlign(CENTER);
-    textSize(64);
-    fill(0);
+    textSize(15);
+    fill(255,105,204);
     text(id, minx + (maxx-minx)*0.5, maxy - 10);
-    textSize(32);
+    textSize(15);
     //text(lifespan, minx + (maxx-minx)*0.5, miny - 10);
   }
 
