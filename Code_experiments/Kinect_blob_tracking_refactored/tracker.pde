@@ -1,6 +1,6 @@
 class Tracker{
   
-  Kinect kinect;
+  //Kinect kinect;
   
   // Depth image
   PImage trackerDataMap;
@@ -11,25 +11,48 @@ class Tracker{
   int blobCounter = 0;
   
   int maxLife = 50;
+  int minBlobSize = 500; // area : h*w of blob
   
   color trackColor; 
   float threshold = 40;
   float distThreshold = 50;
   
+  ArrayList<Area> ignoreAreas = new ArrayList<Area>();
+  
   ArrayList<Blob> blobs = new ArrayList<Blob>();
   
-  Tracker(PApplet this_){
+  //Tracker(PApplet this_){
+  Tracker(){
     trackColor = color(255);
-    kinect = new Kinect(this_);
-    kinect.initDepth();
+    //kinect = new Kinect(this_);
+    //kinect.initDepth();
     //angle = kinect.getTilt();
-    trackerDataMap = new PImage(kinect.width, kinect.height);
+    //trackerDataMap = new PImage(kinect.width, kinect.height);
+    trackerDataMap = new PImage(640,480);
   }
   
+    void detectBlobs(int [] rawDepthData){
+      
+    if (loading) return;
+    // alter input image based on threshold, needed for altering the Shiffmann code to work with Kinect images instead
+    // Threshold the depth image
+    //int[] rawDepth = kinect.getRawDepth();
+    for (int i=0; i < rawDepthData.length; i++) {
+      if (rawDepthData[i] >= minDepth && rawDepthData[i] <= maxDepth) {
+        trackerDataMap.pixels[i] = color(255);
+      } 
+      else {
+        trackerDataMap.pixels[i] = color(0);
+      }
+    }
+    findBlobs(); // run blob finder
+  }
+  
+  /*
   void detectBlobs(){
     
     // alter input image based on threshold, needed for altering the Shiffmann code to work with Kinect images instead
-     // Threshold the depth image
+    // Threshold the depth image
     int[] rawDepth = kinect.getRawDepth();
     for (int i=0; i < rawDepth.length; i++) {
       if (rawDepth[i] >= minDepth && rawDepth[i] <= maxDepth) {
@@ -41,13 +64,29 @@ class Tracker{
         trackerDataMap.pixels[i] = color(0);
       }
     }
-    
+    findBlobs(); // run blob finder
+  }
+  */
+  
+  
+  // overloaded function for simulation purpose
+  void detectBlobs(PImage videoFrame){
+    if (loading) return;
+    trackerDataMap = videoFrame;
+    findBlobs(); // run blob finder
+  }
+  
+  
+  void findBlobs(){
     
     ArrayList<Blob> currentBlobs = new ArrayList<Blob>();
   
     // Begin loop to walk through every pixel
     for (int x = 0; x < trackerDataMap.width; x++ ) {
       for (int y = 0; y < trackerDataMap.height; y++ ) {
+        
+        if (isIgnored(x, y)) continue; // procees to next pixel if this one is in a ignored area
+        
         int loc = x + y * trackerDataMap.width;
         // What is current color
         color currentColor = trackerDataMap.pixels[loc];
@@ -78,9 +117,10 @@ class Tracker{
         }
       }
     }
-  
+    
+    // remove too small blobs
     for (int i = currentBlobs.size()-1; i >= 0; i--) {
-      if (currentBlobs.get(i).size() < 500) {
+      if (currentBlobs.get(i).size() < minBlobSize) {
         currentBlobs.remove(i);
       }
     }
@@ -156,24 +196,39 @@ class Tracker{
       }
     }
   }
-
   
-  PImage getTrackerImage(int imageMode){
-    if (imageMode == 0) {
+  // checks if a given pixel is in a ignore area
+  boolean isIgnored(int x, int y){
+      for (Area a : ignoreAreas){
+        if (distSq(a.x, a.y, x, y) < a.radius*a.radius) return true;  
+      }
+      return false;
+  }
+  
+  // retrieve image (trackerDataMap) from tracker
+  PImage getTrackerImage(){
       trackerDataMap.updatePixels();
       return trackerDataMap;
-    }
-    else if (imageMode == 1) {
-      return kinect.getDepthImage();
-    }
-    //else if (imageMode == 2) return kinect.getVideoImage();
-    return null;
-    
   }
   
   
+  // Draw all blobs
+  void showBlobs(){
+      for (Blob b : blobs) {
+      b.show();
+    } 
+  }
   
-  // GETTERS & SETTERS
+  
+  // drasw ignore areas
+  void showIgnoreAreas(){
+    for (Area ia : ignoreAreas){
+      ia.show();
+    }
+  }
+  
+  
+  // GETTERS, SETTERS, CONTROLS, SETTINGS
   void setThreshold(float threshold_){
     threshold = threshold_;
   }
@@ -236,12 +291,29 @@ class Tracker{
     maxDepth = constrain(maxDepth-step, minDepth, 2047);
   }
   
-  
-  // Draw all blobs
-  void showBlobs(){
-      for (Blob b : blobs) {
-      b.show();
-    } 
+  void setTrackColor(color c){
+    trackColor = c;
   }
+  
+  // add area to be ignored by tracker
+  void addIgnoreArea(int x, int y, int radius){
+    ignoreAreas.add(new Area(x, y, radius));  
+  }
+  // clear all ingore areas in the list
+  void clearIgnoreAreas(){
+    ignoreAreas.clear();  
+  }
+  
+  // gives string version of ignoreAreas list
+  String ignoreAreasToString(){
+    String output = "";
+    for (Area a : t.ignoreAreas){ // ### make ignoreAreasToString() inside tracker class instead
+      output += "|"+a.x+","+a.y+","+a.radius;
+    }
+    return output;
+  }
+  
+ 
+  
   
 }
