@@ -311,6 +311,15 @@ class Tracker{
   void addIgnoreArea(int x, int y, int radius){
     ignoreAreas.add(new Area(x, y, radius));  
   }
+  // delete ignore area
+  void deleteIgnoreArea(int x, int y){
+    for (int i = 0; i < ignoreAreas.size(); i++){
+      if (ignoreAreas.get(i).isInside(x, y)) {
+        ignoreAreas.remove(i);
+      }
+    }
+  }
+  
   // clear all ingore areas in the list
   void clearIgnoreAreas(){
     ignoreAreas.clear();  

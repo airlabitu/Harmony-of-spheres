@@ -12,4 +12,9 @@ class Area{
     stroke(255, 0, 0);
     circle(x, y, radius*2);
   }
+  
+  boolean isInside(int x2, int y2){
+    if (dist(x, y, x2, y2) < radius) return true;
+    return false;
+  }
 }
