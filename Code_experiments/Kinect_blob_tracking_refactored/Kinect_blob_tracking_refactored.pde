@@ -21,6 +21,11 @@
 // Lav "blind spot" interface
   // test med kinect  
 
+// lave selectInput til simulateion
+  // sæt standard video i kode
+  // lav interface til at loade en anden fil
+  // tilføj denne til save og load settings
+
 // Lav OSC output interface
   // set IP i settingsfil
   // Enable disable i textInfo interface
@@ -93,13 +98,15 @@ void drawInfo() {
   textAlign(LEFT);
   textSize(15);
   stroke(255);
-  int firstCol = 90, secondCol = 280, thirdCol = 400;
-  int firstRow = 130, rowStep = 20;
+  int firstCol = 110, secondCol = 300, thirdCol = 420;
+  int firstRow = 95, rowStep = 20;
+  
+  String [] inputModes = {"Kinect", "Webcam", "Simulation"};
 
   if (textInfo) {
     int rowNumber = 1;
     fill(0, 180);
-    rect(firstCol-20, firstRow-20, 460, 310);
+    rect(firstCol-20, firstRow-10, 460, 310);
     fill(255);
     text("Min depth :", firstCol, firstRow+rowStep*rowNumber);   
     text("[" + t.getMinDepth() + "]", secondCol, firstRow+rowStep*rowNumber);  
@@ -122,7 +129,6 @@ void drawInfo() {
     text("adjust (9) / (0)", thirdCol, firstRow+rowStep*rowNumber);
     rowNumber+=2;
     
-    String [] inputModes = {"Kinect", "Webcam", "Simulation"};
     text("Input mode :", firstCol, firstRow+rowStep*rowNumber);   
     text("[" + inputModes[inputMode] + "]", secondCol, firstRow+rowStep*rowNumber);  
     text("change (m)", thirdCol, firstRow+rowStep*rowNumber);
@@ -144,18 +150,35 @@ void drawInfo() {
     text("Delete ignore area :", firstCol, firstRow+rowStep*rowNumber);
     text("right click", thirdCol, firstRow+rowStep*rowNumber);
   }
+  
+  textAlign(CENTER);
+  
+  // upper left info box
+  fill(0, 150);
+  rect(0, 0, 70, 30);
+  fill(255);
+  text("FPS: " + int(frameRate), 35, 20);
+  
+  // upper right corner
+  fill(0, 150);
+  rect(width-100, 0, 100, 30);
+  fill(255);
+  text(inputModes[inputMode], width-50, 20);
+  
+  // lower left info box
   fill(0, 150);
   rect(0, height-30, 170, 30);
   fill(255);
-  if (textInfo) text("press 't' to close info", 10, height-10);
-  else text("press 't' to open info", 10, height-10);
+  if (textInfo) text("press 't' to close info", 85, height-10);
+  else text("press 't' to open info", 85, height-10);
+  
+  // lower right info box
   if (errorString.length() > 0) {
     fill(0, 150);
     rect(width-200, height-30, 200, 30);
     fill(255);
-    textAlign(RIGHT);
-    text(errorString, width-20, height-10);
-    
+    //textAlign(RIGHT);
+    text(errorString, width-100, height-10);
   }
 }
 
