@@ -19,6 +19,9 @@
 
 // tekst for ...
 
+// save/load
+  // change to setters and getters
+
 // Lav "blind spot" interface
   // control tracker / ignore setting flow
   // fix concurrent modification exception line 193 i tracker
@@ -59,7 +62,7 @@ String errorString = "";
 
 void setup() {
   size(640, 480);
-  loadSettings("data/settings15.txt"); // load default settings from file
+  loadSettings("data/default_settings.txt"); // load default settings from file
   setInputMode(inputMode); 
 }
 
@@ -120,22 +123,31 @@ void drawInfo() {
   int firstCol = 90, secondCol = 280, thirdCol = 400;
   int firstRow = 130, rowStep = 20;
 
-  if (textInfo) {    
+  if (textInfo) {
+    int rowNumber = 1;
     fill(0, 150);
     rect(firstCol-20, firstRow-20, 460, 250);
     fill(255);
-    text("Min depth :", firstCol, firstRow+rowStep*1);   
-    text("[" + t.getMinDepth() + "]", secondCol, firstRow+rowStep*1);  
-    text("adjust (1) / (2)", thirdCol, firstRow+rowStep*1);
-    text("Max depth :", firstCol, firstRow+rowStep*2);   
-    text("[" + t.getMaxDepth() + "]", secondCol, firstRow+rowStep*2);  
-    text("adjust (3) / (4)", thirdCol, firstRow+rowStep*2);
-    text("Color threshold :", firstCol, firstRow+rowStep*3);   
-    text("[" + t.getThreshold() + "]", secondCol, firstRow+rowStep*3);  
-    text("adjust (5) / (6)", thirdCol, firstRow+rowStep*3);
-    text("Dist threshold :", firstCol, firstRow+rowStep*4);   
-    text("[" + t.getDistThreshold() + "]", secondCol, firstRow+rowStep*4);  
-    text("adjust (7) / (8)", thirdCol, firstRow+rowStep*4);
+    text("Min depth :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + t.getMinDepth() + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("adjust (1) / (2)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber++;
+    text("Max depth :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + t.getMaxDepth() + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("adjust (3) / (4)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber++;
+    text("Color threshold :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + t.getThreshold() + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("adjust (5) / (6)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber++;
+    text("Dist threshold :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + t.getDistThreshold() + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("adjust (7) / (8)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber++;
+    text("Min blob size :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + t.getMinBlobSize() + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("adjust (9) / (0)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber+=2;
   
     /*
     String imageString = "tracker";
@@ -146,18 +158,18 @@ void drawInfo() {
     */
     
     String [] inputModes = {"Kinect", "Webcam", "Simulation"};
-    text("Input mode :", firstCol, firstRow+rowStep*6);   
-    text("[" + inputModes[inputMode] + "]", secondCol, firstRow+rowStep*6);  
-    text("change (m)", thirdCol, firstRow+rowStep*6);
-
+    text("Input mode :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + inputModes[inputMode] + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("change (m)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber++;
     String drawBlobsString = "yes";
     if (!drawBlobs) drawBlobsString = "no";
-    text("Blobs overlay :", firstCol, firstRow+rowStep*7);   
-    text("[" + drawBlobsString + "]", secondCol, firstRow+rowStep*7);  
-    text("toggle (b)", thirdCol, firstRow+rowStep*7);
-
-    text("Load & save settings :", firstCol, firstRow+rowStep*9);   
-    text("press (l) / (s)", thirdCol, firstRow+rowStep*9);
+    text("Blobs overlay :", firstCol, firstRow+rowStep*rowNumber);   
+    text("[" + drawBlobsString + "]", secondCol, firstRow+rowStep*rowNumber);  
+    text("toggle (b)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber+=2;
+    text("Load & save settings :", firstCol, firstRow+rowStep*rowNumber);   
+    text("press (l) / (s)", thirdCol, firstRow+rowStep*rowNumber);
   }
   fill(0, 150);
   rect(0, height-30, 170, 30);
@@ -180,7 +192,7 @@ void saveSettingsCallback(File selection) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("Save to filke " + selection.getAbsolutePath());
-    String [] settings = new String [7];
+    String [] settings = new String [8];
     settings[0] = ""+t.minDepth;
     settings[1] = ""+t.maxDepth;
     settings[2] = ""+t.threshold;
@@ -189,6 +201,7 @@ void saveSettingsCallback(File selection) {
     settings[4] = ""+drawBlobs;
     settings[5] = "ignore areas:"+t.ignoreAreasToString();
     settings[6] = ""+inputMode;
+    settings[7] = ""+t.getMinBlobSize();
     saveStrings(selection.getAbsolutePath(), settings);
   }
 }
@@ -232,6 +245,7 @@ void loadSettings(String path) {
   }
   else println("no ignore areas to load");
   inputMode = int(settings[6]);
+  t.setMinBlobSize(int(settings[7]));
   
   loading = false; // flag loading process done 
   
@@ -264,6 +278,12 @@ void keyPressed() {
   } 
   else if (key == '8') {
     t.increaseDistThreshold(1);
+  }
+  else if (key == '9') {
+    t.decreaseMinBlobSize(100);
+  } 
+  else if (key == '0') {
+    t.increaseMinBlobSize(100);
   }
   /*
   else if (key == 'i') {

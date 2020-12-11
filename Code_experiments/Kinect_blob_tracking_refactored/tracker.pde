@@ -294,6 +294,18 @@ class Tracker{
   void setTrackColor(color c){
     trackColor = c;
   }
+  void increaseMinBlobSize(int step){
+    minBlobSize+=step;
+  }
+  void decreaseMinBlobSize(int step){
+    minBlobSize-=step;
+  }
+  int getMinBlobSize(){
+    return minBlobSize;
+  }
+  void setMinBlobSize(int size){
+    minBlobSize = size;
+  }
   
   // add area to be ignored by tracker
   void addIgnoreArea(int x, int y, int radius){
