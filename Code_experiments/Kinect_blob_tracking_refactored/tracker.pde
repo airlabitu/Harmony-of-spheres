@@ -228,7 +228,14 @@ class Tracker{
   }
   
   
-  // GETTERS, SETTERS, CONTROLS, SETTINGS
+  // --- GETTERS, SETTERS, CONTROLS, SETTINGS ---
+  
+  Blob [] getBlobs(){
+    Blob[] array = new Blob[t.blobs.size()]; 
+    array = t.blobs.toArray(array);
+    return array;
+  }
+  
   void setThreshold(float threshold_){
     threshold = threshold_;
   }
@@ -318,6 +325,10 @@ class Tracker{
         ignoreAreas.remove(i);
       }
     }
+  }
+  
+  int getNrOfBlobs(){
+    return blobs.size();
   }
   
   // clear all ingore areas in the list

@@ -15,9 +15,6 @@
 
 // Test med Kinect
 
-// save/load
-  // change to setters and getters
-
 // Lav "blind spot" interface
   // test med kinect  
 
@@ -26,24 +23,27 @@
   // lav interface til at loade en anden fil
   // tilføj denne til save og load settings
 
-// Lav OSC output interface
-  // set IP i settingsfil
-  // Enable disable i textInfo interface
-
 import processing.video.*;
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
-
+import oscP5.*;
+import netP5.*;
+  
 Kinect kinect;
 Movie simulationVideo;
 Capture webCam;
 
 Tracker t = new Tracker();
 
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+String [] oscInfo;
+
 int inputMode = 1; // 0 = kinect | 1 = webCam | 2 = video file simulation 
 
 boolean textInfo = true;
 boolean drawBlobs = true;
+boolean sendingOSC = false;
 
 // IGNORE AREAS
 int pressX, pressY;
@@ -56,8 +56,9 @@ String errorString = "";
 
 void setup() {
   size(640, 480);
+  frameRate(25);
   loadSettings("data/default_settings.txt"); // load default settings from file
-  setInputMode(inputMode); 
+  setInputMode(inputMode);
 }
 
 
@@ -80,6 +81,8 @@ void draw() {
   }
   else if (inputMode == 2) t.detectBlobs(simulationVideo);
   
+  if (sendingOSC && t.getNrOfBlobs() > 0) sendBlobsOsc(); // send blobs over OSC if there is any blobs to send
+  
   image(t.getTrackerImage(), 0, 0); // display the image from the tracker
 
   if (drawBlobs) t.showBlobs(); // display tracked blobs
@@ -99,14 +102,14 @@ void drawInfo() {
   textSize(15);
   stroke(255);
   int firstCol = 110, secondCol = 300, thirdCol = 420;
-  int firstRow = 95, rowStep = 20;
+  int firstRow = 85, rowStep = 20;
   
   String [] inputModes = {"Kinect", "Webcam", "Simulation"};
 
   if (textInfo) {
     int rowNumber = 1;
     fill(0, 180);
-    rect(firstCol-20, firstRow-10, 460, 310);
+    rect(firstCol-20, firstRow-10, 460, 330);
     fill(255);
     text("Min depth :", firstCol, firstRow+rowStep*rowNumber);   
     text("[" + t.getMinDepth() + "]", secondCol, firstRow+rowStep*rowNumber);  
@@ -139,6 +142,12 @@ void drawInfo() {
     text("[" + drawBlobsString + "]", secondCol, firstRow+rowStep*rowNumber);  
     text("toggle (b)", thirdCol, firstRow+rowStep*rowNumber);
     rowNumber+=2;
+    String sendingOscState = "yes";
+    if (!sendingOSC) sendingOscState = "no";
+    text("Sending OSC :", firstCol, firstRow+rowStep*rowNumber);
+    text("[" + sendingOscState + "]", secondCol, firstRow+rowStep*rowNumber);
+    text("toggle (o)", thirdCol, firstRow+rowStep*rowNumber);
+    rowNumber+=2;
     text("Load & save settings :", firstCol, firstRow+rowStep*rowNumber);   
     text("press (l) / (s)", thirdCol, firstRow+rowStep*rowNumber);
     rowNumber+=2;
@@ -149,6 +158,7 @@ void drawInfo() {
     rowNumber++;
     text("Delete ignore area :", firstCol, firstRow+rowStep*rowNumber);
     text("right click", thirdCol, firstRow+rowStep*rowNumber);
+    
   }
   
   textAlign(CENTER);
@@ -176,7 +186,7 @@ void drawInfo() {
   if (errorString.length() > 0) {
     fill(0, 150);
     rect(width-200, height-30, 200, 30);
-    fill(255);
+    fill(255, 0, 0);
     //textAlign(RIGHT);
     text(errorString, width-100, height-10);
   }
@@ -188,16 +198,17 @@ void saveSettingsCallback(File selection) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("Save to filke " + selection.getAbsolutePath());
-    String [] settings = new String [8];
-    settings[0] = ""+t.minDepth;
-    settings[1] = ""+t.maxDepth;
-    settings[2] = ""+t.threshold;
-    settings[3] = ""+t.distThreshold;
-    //settings[4] = ""+image;
+    String [] settings = new String [10];
+    settings[0] = ""+t.getMinDepth();
+    settings[1] = ""+t.getMaxDepth();
+    settings[2] = ""+t.getThreshold();
+    settings[3] = ""+t.getDistThreshold();
     settings[4] = ""+drawBlobs;
     settings[5] = "ignore areas:"+t.ignoreAreasToString();
     settings[6] = ""+inputMode;
     settings[7] = ""+t.getMinBlobSize();
+    settings[8] = ""+oscInfo[0]+","+oscInfo[1]+","+oscInfo[2];
+    settings[9] = ""+sendingOSC;
     saveStrings(selection.getAbsolutePath(), settings);
   }
 }
@@ -235,7 +246,10 @@ void loadSettings(String path) {
   else println("no ignore areas to load");
   inputMode = int(settings[6]);
   t.setMinBlobSize(int(settings[7]));
-  
+  oscInfo = split(settings[8], ',');
+  oscP5 = new OscP5(this, int(oscInfo[1]));
+  myRemoteLocation = new NetAddress(oscInfo[0], int(oscInfo[2]));
+  sendingOSC = boolean(settings[9]);
   loading = false; // flag loading process done 
   
 }
@@ -291,6 +305,9 @@ void keyPressed() {
     inputMode++;
     if (inputMode > 2) inputMode = 0;
     setInputMode(inputMode);
+  }
+  else if (key == 'o') {
+    sendingOSC=!sendingOSC;
   }
 }
 
@@ -357,13 +374,22 @@ void movieEvent(Movie m) {
 
 void setInputMode(int mode){
   
-  if (kinect != null && kinect.numDevices() != 0) kinect.stopDepth();
+  if (kinect != null){
+    if (kinect.numDevices() != 0) {
+      kinect.stopDepth();
+      //kinect = null;
+      //kinect.enableColorDepth(false);
+      //kinect.enableIR(false);
+      
+    }
+  }
   if (webCam != null) webCam.stop();
   if (simulationVideo != null) simulationVideo.stop();
   //kinect = null;
   if (mode == 0) {
-    kinect = new Kinect(this);
+    if (kinect == null) kinect = new Kinect(this);
     if (kinect.numDevices() > 0) kinect.initDepth();
+    t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
   } 
   else if (mode == 1) {
     String[] cameras = Capture.list();
@@ -375,5 +401,22 @@ void setInputMode(int mode){
   else if (mode == 2) {
     simulationVideo = new Movie(this, "stresstest.mp4");
     simulationVideo.loop();
+    t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
   }
+}
+
+void sendBlobsOsc(){
+  
+  OscMessage myMessage = new OscMessage("/Blobs|X|Y|ID|SIZE|");
+  Blob[] blobs = t.getBlobs();
+  boolean blobsAdded = false;
+  for (Blob b : blobs){
+    //println(b.getCenter().x, b.getCenter().y, b.id);
+    myMessage.add(int(b.getCenter().x)); // add position x ,y
+    myMessage.add(int(b.getCenter().y));
+    myMessage.add(b.id); // add blob ID
+    myMessage.add(int(b.size())); // add blob size (w*h)
+    blobsAdded = true;
+  }  
+  if (blobsAdded) oscP5.send(myMessage, myRemoteLocation); // send the message if any blobs where added to the OSC message
 }

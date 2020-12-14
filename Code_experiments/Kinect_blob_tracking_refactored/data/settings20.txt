@@ -7,4 +7,4 @@ ignore areas:
 2
 500
 localhost,12345,6789
-false
+true
