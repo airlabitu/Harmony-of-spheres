@@ -127,6 +127,10 @@ class Blob implements Comparable<Blob> {
   float getMinDepth(){
     return minDepth.depth;
   }
+  
+  int getNrOfPixels(){
+    return pixelList.size();
+  }
 
   boolean isNear(float x, float y) {
 
