@@ -1,20 +1,22 @@
+
+
 // Sound manipulation
-// Volumen going low to high
-// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere center
+// Playback of sounds is reversed, this is handled in the soundfile. Volumen going from low to high
+// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere cente
 
 import oscP5.*;
-import ddf.minim.*;
+import processing.sound.*;
 
 OscP5 oscP5;
 Blob [] blobs;
 int framesSinceLastOscMessage = 0;
 
-Minim minim;
+//Minim minim;
 //AudioPlayer [] tracks;
 Sphere [] spheres;
 
-int minGain = -80;
-int maxGain = 5;
+float minGain = 0.001;
+float maxGain = 1.0;
 
 boolean simulate = false;
 
@@ -23,22 +25,30 @@ void setup() {
   frameRate(25);
   textAlign(CENTER);
   oscP5 = new OscP5(this,6789);
-  
-  minim = new Minim(this);
+  new SoundFile(this, "1.wav");
+  //minim = new Minim(this);
   spheres = new Sphere [9];
   
   
   // turn off sounds
   
-  spheres[0] = new Sphere(100, 100, 150, "1.mp3");
-  spheres[1] = new Sphere(300, 100, 100, "2.mp3");
-  spheres[2] = new Sphere(500, 100, 150, "3.mp3");
-  spheres[3] = new Sphere(100, 250, 100, "4.mp3");
-  spheres[4] = new Sphere(300, 250, 200, "5.mp3");
-  spheres[5] = new Sphere(500, 250, 100, "6.mp3");
-  spheres[6] = new Sphere(100, 400, 150, "7.mp3");
-  spheres[7] = new Sphere(300, 400, 100, "8.mp3");
-  spheres[8] = new Sphere(500, 400, 100, "9.mp3");
+  spheres[0] = new Sphere(100, 100, 150, "1.wav", this);
+  
+  spheres[1] = new Sphere(300, 100, 100, "2.wav", this);
+  
+  spheres[2] = new Sphere(500, 100, 150, "3.wav", this);
+  
+  spheres[3] = new Sphere(100, 250, 100, "4.wav", this);
+
+  spheres[4] = new Sphere(300, 250, 200, "5.wav", this);
+  
+  spheres[5] = new Sphere(500, 250, 100, "6.wav", this);
+  
+  spheres[6] = new Sphere(100, 400, 150, "7.wav", this);
+  
+  spheres[7] = new Sphere(300, 400, 100, "8.wav", this);
+  
+  spheres[8] = new Sphere(500, 400, 100, "9.wav", this);
   
   
   // turn on sounds
@@ -62,9 +72,11 @@ void setup() {
   spheres[8] = new Sphere(500, 400, 150, "9.mp3");
   */
   for (Sphere s : spheres){
-    s.track.setGain(minGain);
+    //s.track.setGain(minGain);
+    s.track.amp(minGain);
+    //s.setVol(minGain, 500);
     s.track.loop();
-    s.track.setGain(minGain);
+    //s.track.setGain(minGain);
   }
   
   //tracks = new AudioPlayer [9]; 
@@ -80,12 +92,19 @@ void setup() {
 
 void draw() {
   background(0);
-  
+  /*
   for (Sphere s : spheres){
     s.show();
+    s.update();
     if (simulate) mouseInteraction(s);
     else blobsInteraction(s);
   }
+  */
+  
+  spheres[0].show();
+  spheres[0].update();
+  if (simulate) mouseInteraction(spheres[0]);
+  else blobsInteraction(spheres[0]);
   
   fill(0,0,255);
   text("Simulate: " + simulate, 50, height -10); 
@@ -155,7 +174,9 @@ void mouseInteraction(Sphere s){
 void blobsInteraction(Sphere s){
   if (framesSinceLastOscMessage > 25) {
     blobs = null;
-    s.track.shiftGain(s.track.getGain(), minGain, 2000);
+    
+    s.setVol(0, 1000);
+    println("Vol:", s.getVol());
   }
   if (blobs != null){
     int minDist = 999999999;
@@ -180,8 +201,8 @@ void blobsInteraction(Sphere s){
 void soundManipulation(Sphere s, int dist){
   //int d = (int)dist(mouseX, mouseY, s.x, s.y);
   // turn off
-  if (dist < s.radius) s.track.shiftGain(s.track.getGain(), map(dist, 0, s.radius, minGain, maxGain), 100);   // shift over 100 millis 
-  else s.track.shiftGain(s.track.getGain(), maxGain, 100); // shift to max over 100 milllis 
+  if (dist < s.radius) s.setVol(map(dist, 0, s.radius, maxGain, minGain), 5000);   // shift over 100 millis 
+  else s.setVol(0, 5000); // shift to max over 100 milllis 
   
   /*
   // turn on
@@ -205,22 +226,62 @@ class Blob{
 
 class Sphere{
   int x, y, radius;
-  AudioPlayer track;
+  SoundFile track;
+  float vol;
+  float targetVol;
+  float volIncrement;
+  float incrementDir = 0;
   
-  Sphere(int x_, int y_, int radius_, String filename){
+  Sphere(int x_, int y_, int radius_, String filename, PApplet pa){
     x = x_;
     y = y_;
     radius = radius_;
-    track = minim.loadFile(filename, 2048);
+    track = new SoundFile(pa, filename);
+  }
+  
+  void update(){
+    vol += volIncrement*incrementDir;
+    if (vol < targetVol && incrementDir < 0){
+      vol = targetVol;
+      incrementDir = 0;
+    }
+    else if (vol > targetVol && incrementDir > 0){
+      vol = targetVol;
+      incrementDir = 0;
+    }
+    //track.amp(vol);
+    
+    //volIncrement = 
+    //if ()
+  }
+  
+  void setVol(float v, int time){
+    if (frameRate == 0) return; // do nothing at very low frame rate to avoid division by zero error
+    println("Before:", "TV:", targetVol, "V:", vol, "ID:", incrementDir, "VI:", volIncrement);
+    targetVol = v;
+    float millisPrFrame = 1000/frameRate; 
+    volIncrement = 0.0001*(time/millisPrFrame);
+    println(vol, v, time, millisPrFrame, time/millisPrFrame, volIncrement);
+    
+    if (targetVol > vol) incrementDir = -1;
+    else if (targetVol < vol) incrementDir = 1;
+    else incrementDir = 0;
+    //println("After:", "TV:", targetVol, "V:", vol, "ID:", incrementDir, "VI:", volIncrement, "MPF:", millisPrFrame);
+    //track.amp(v);
+    //vol = v;
+  }
+  
+  float getVol(){
+    return vol;
   }
   
   void show(){
     noFill();
-    if (track.getGain() > minGain) fill(255, map(track.getGain(), minGain, maxGain, 0, 150));
+    if (vol > minGain) fill(255, map(vol, minGain, maxGain, 0, 150));
     stroke(255);
     ellipse(x, y, radius*2, radius*2);
     fill(0,255,0);
-    text(track.getGain(), x, y+5);
+    text(vol, x, y+5);
   }
 }
 

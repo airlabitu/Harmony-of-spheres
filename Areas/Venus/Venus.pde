@@ -1,6 +1,6 @@
 // Sound manipulation
-// Volumen going low to high
-// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere center
+// Playback of sounds is reversed, this is handled in the soundfile. Volumen going from low to high
+// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere cente
 
 import oscP5.*;
 import ddf.minim.*;
@@ -31,13 +31,21 @@ void setup() {
   // turn off sounds
   
   spheres[0] = new Sphere(100, 100, 150, "1.mp3");
+  
   spheres[1] = new Sphere(300, 100, 100, "2.mp3");
+  
   spheres[2] = new Sphere(500, 100, 150, "3.mp3");
+  
   spheres[3] = new Sphere(100, 250, 100, "4.mp3");
+
   spheres[4] = new Sphere(300, 250, 200, "5.mp3");
+  
   spheres[5] = new Sphere(500, 250, 100, "6.mp3");
+  
   spheres[6] = new Sphere(100, 400, 150, "7.mp3");
+  
   spheres[7] = new Sphere(300, 400, 100, "8.mp3");
+  
   spheres[8] = new Sphere(500, 400, 100, "9.mp3");
   
   

@@ -1,5 +1,5 @@
 // Sound manipulation
-// Volumen going low to high
+// Playback speed going from fast to slow, together with volumen going from low to high
 // This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere center
 
 import oscP5.*;
@@ -28,21 +28,8 @@ void setup() {
   spheres = new Sphere [9];
   
   
-  // turn off sounds
-  
-  spheres[0] = new Sphere(100, 100, 150, "1.mp3");
-  spheres[1] = new Sphere(300, 100, 100, "2.mp3");
-  spheres[2] = new Sphere(500, 100, 150, "3.mp3");
-  spheres[3] = new Sphere(100, 250, 100, "4.mp3");
-  spheres[4] = new Sphere(300, 250, 200, "5.mp3");
-  spheres[5] = new Sphere(500, 250, 100, "6.mp3");
-  spheres[6] = new Sphere(100, 400, 150, "7.mp3");
-  spheres[7] = new Sphere(300, 400, 100, "8.mp3");
-  spheres[8] = new Sphere(500, 400, 100, "9.mp3");
-  
-  
   // turn on sounds
-  /*
+  
   spheres[0] = new Sphere(100, 100, 200, "1.mp3");
   
   spheres[1] = new Sphere(300, 100, 150, "2.mp3");
@@ -60,7 +47,7 @@ void setup() {
   spheres[7] = new Sphere(300, 400, 150, "8.mp3");
   
   spheres[8] = new Sphere(500, 400, 150, "9.mp3");
-  */
+  
   for (Sphere s : spheres){
     s.track.setGain(minGain);
     s.track.loop();
@@ -179,15 +166,11 @@ void blobsInteraction(Sphere s){
 
 void soundManipulation(Sphere s, int dist){
   //int d = (int)dist(mouseX, mouseY, s.x, s.y);
-  // turn off
-  if (dist < s.radius) s.track.shiftGain(s.track.getGain(), map(dist, 0, s.radius, minGain, maxGain), 100);   // shift over 100 millis 
-  else s.track.shiftGain(s.track.getGain(), maxGain, 100); // shift to max over 100 milllis 
   
-  /*
   // turn on
   if (dist < s.radius) s.track.shiftGain(s.track.getGain(), map(dist, 0, s.radius, maxGain, minGain), 100);   // shift over 100 millis 
   else s.track.shiftGain(s.track.getGain(), minGain, 100); // shift to max over 100 milllis 
-  */
+  
 }
 
 class Blob{
