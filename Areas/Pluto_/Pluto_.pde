@@ -1,6 +1,6 @@
 // Sound manipulation
-// Playback of sounds is reversed, this is handled in the soundfile. Volumen going from low to high
-// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere cente
+// Playback speed going from fast to slow, together with volumen going from low to high
+// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere center
 
 import oscP5.*;
 import processing.sound.*;
@@ -24,13 +24,13 @@ void setup() {
   spheres = new Sphere [9];
   
   // turn off sounds
-  spheres[0] = new Sphere(100, 100, 150, "1.wav", this);
+  spheres[0] = new Sphere(100, 100, 100, "1.wav", this);
   spheres[1] = new Sphere(300, 100, 100, "2.wav", this);
-  spheres[2] = new Sphere(500, 100, 150, "3.wav", this);
+  spheres[2] = new Sphere(500, 100, 100, "3.wav", this);
   spheres[3] = new Sphere(100, 250, 100, "4.wav", this);
-  spheres[4] = new Sphere(300, 250, 200, "5.wav", this);
+  spheres[4] = new Sphere(300, 250, 100, "5.wav", this);
   spheres[5] = new Sphere(500, 250, 100, "6.wav", this);
-  spheres[6] = new Sphere(100, 400, 150, "7.wav", this);
+  spheres[6] = new Sphere(100, 400, 100, "7.wav", this);
   spheres[7] = new Sphere(300, 400, 100, "8.wav", this);
   spheres[8] = new Sphere(500, 400, 100, "9.wav", this);
   
@@ -46,7 +46,7 @@ void draw() {
   background(0);
   
   for (Sphere s : spheres){
-    s.show();
+    s.show();    
     s.update();
     if (simulate) mouseInteraction(s);
     else blobsInteraction(s);
@@ -121,9 +121,10 @@ void blobsInteraction(Sphere s){
 void soundManipulation(Sphere s, int dist){
   // turn off
   if (dist < s.radius) s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis 
-  else s.vol.setVal(0, millisToFadeOutside); // shift to min over 100 milllis   
+  else s.vol.setVal(s.vol.getMin(), millisToFadeOutside); // shift to min over 100 milllis 
+  //s.track.amp(s.vol.getVal());
+  s.track.rate(1-s.vol.getVal());
 }
-
 
 // key for toggling mouse simulation
 void keyPressed(){

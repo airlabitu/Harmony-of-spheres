@@ -1,6 +1,6 @@
 // Sound manipulation
-// Playback of sounds is reversed, this is handled in the soundfile. Volumen going from low to high
-// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere cente
+// Playback speed going from fast to slow, together with volumen going from low to high
+// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere center
 
 import oscP5.*;
 import processing.sound.*;
@@ -95,6 +95,7 @@ void mouseInteraction(Sphere s){
 }
 
 void blobsInteraction(Sphere s){
+  
   if (framesSinceLastOscMessage > 25) {
     blobs = null;
     
@@ -120,10 +121,10 @@ void blobsInteraction(Sphere s){
 
 void soundManipulation(Sphere s, int dist){
   // turn off
-  if (dist < s.radius) s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis 
-  else s.vol.setVal(0, millisToFadeOutside); // shift to min over 100 milllis   
+  if (dist < s.radius) s.vol.setVal(map(dist, 0, s.radius, s.vol.getMin(), s.vol.getMax()), millisToFadeInside);   // shift over 100 millis 
+  else s.vol.setVal(s.vol.getMax(), millisToFadeOutside); // shift to min over 100 milllis 
+  //s.track.amp(s.vol.getVal());
 }
-
 
 // key for toggling mouse simulation
 void keyPressed(){
