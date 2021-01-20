@@ -1,6 +1,6 @@
 // Sound manipulation
-// Playback speed going from normal spped to slow, together with volumen going from low to high
-// This happens when a user enters the sphere circle, and is adjusted according to distanve from user blob center to sphere center
+// All spheres/tracks are playing as a default. The sounds of an entier group fades out together.
+// This happens when a user enters one of the sphere circle of a group, and is adjusted according to distanve from user blob center to sphere center
 
 import oscP5.*;
 import processing.sound.*;
@@ -24,15 +24,15 @@ void setup() {
   spheres = new Sphere [9];
   
   // turn off sounds
-  spheres[0] = new Sphere(100, 100, 100, "1.wav", this);
-  spheres[1] = new Sphere(300, 100, 100, "2.wav", this);
-  spheres[2] = new Sphere(500, 100, 100, "3.wav", this);
-  spheres[3] = new Sphere(100, 250, 100, "4.wav", this);
-  spheres[4] = new Sphere(300, 250, 100, "5.wav", this);
-  spheres[5] = new Sphere(500, 250, 100, "6.wav", this);
-  spheres[6] = new Sphere(100, 400, 100, "7.wav", this);
-  spheres[7] = new Sphere(300, 400, 100, "8.wav", this);
-  spheres[8] = new Sphere(500, 400, 100, "9.wav", this);
+  spheres[0] = new Sphere(100, 100, 100, "1.wav", this, 1, 2);
+  spheres[1] = new Sphere(300, 100, 100, "2.wav", this, 2, 4);
+  spheres[2] = new Sphere(500, 100, 100, "3.wav", this, 3, 3);
+  spheres[3] = new Sphere(100, 250, 100, "4.wav", this, 4, 3);
+  spheres[4] = new Sphere(300, 250, 100, "5.wav", this, 5, 1);
+  spheres[5] = new Sphere(500, 250, 100, "6.wav", this, 6, 4);
+  spheres[6] = new Sphere(100, 400, 100, "7.wav", this, 7, 4);
+  spheres[7] = new Sphere(300, 400, 100, "8.wav", this, 8, 3);
+  spheres[8] = new Sphere(500, 400, 100, "9.wav", this, 9, 2);
   
   for (Sphere s : spheres){
     s.track.loop();
@@ -46,11 +46,12 @@ void draw() {
   background(0);
   
   for (Sphere s : spheres){
-    s.show();    
+    s.show();
     s.update();
     if (simulate) mouseInteraction(s);
     else blobsInteraction(s);
   }
+  
   fill(0,0,255);
   text("Simulate: " + simulate, 50, height -10); 
 }
@@ -95,6 +96,7 @@ void mouseInteraction(Sphere s){
 }
 
 void blobsInteraction(Sphere s){
+  
   if (framesSinceLastOscMessage > 25) {
     blobs = null;
     
@@ -120,11 +122,17 @@ void blobsInteraction(Sphere s){
 
 void soundManipulation(Sphere s, int dist){
   // turn off
-  if (dist < s.radius) s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis 
-  else s.vol.setVal(s.vol.getMin(), millisToFadeOutside); // shift to min over 100 milllis 
+  if (dist < s.radius) {
+    s.vol.setVal(map(dist, 0, s.radius, s.vol.getMin(), s.vol.getMax()), millisToFadeInside);   // shift over 100 millis
+    for (Sphere sp : spheres){
+      if (s.getId() != sp.getId() && s.getGroup() == sp.getGroup()){
+        sp.vol.setVal(s.vol.getVal(), millisToFadeInside);
+      }
+    }
+  }
+  else s.vol.setVal(s.vol.getMax(), millisToFadeOutside); // shift to min over 100 milllis 
   //s.track.amp(s.vol.getVal());
-  //s.track.rate(constrain(1-s.vol.getVal(), 0.2, 0.5));
-  s.track.rate(1-map(s.vol.getVal(), 0, 1, 0, 0.4));
+  
 }
 
 // key for toggling mouse simulation

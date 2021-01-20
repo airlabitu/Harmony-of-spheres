@@ -5,14 +5,18 @@ class Sphere{
   float volIncrement;
   float incrementDir = 0;
   ValueFader vol;
+  int group;
+  int id;
   
-  Sphere(int x_, int y_, int radius_, String filename, PApplet pa){
+  Sphere(int x_, int y_, int radius_, String filename, PApplet pa, int id_, int group_){
     x = x_;
     y = y_;
     radius = radius_;
     track = new SoundFile(pa, filename);
     vol = new ValueFader();
     vol.setMinMax(0,1);
+    id = id_;
+    group = group_;
   }
   
   void update(){
@@ -26,6 +30,16 @@ class Sphere{
     stroke(255);
     ellipse(x, y, radius*2, radius*2);
     fill(0,255,0);
-    text(vol.getVal(), x, y+5);
+    text("Vol: " + vol.getVal(), x, y-20);
+    text("ID: " + id, x, y);    
+    text("Group: " + group, x, y+20); 
+  }
+  
+  int getGroup(){
+    return group;
+  }
+  
+  int getId(){
+    return id;
   }
 }
