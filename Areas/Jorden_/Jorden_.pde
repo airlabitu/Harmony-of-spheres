@@ -123,14 +123,14 @@ void blobsInteraction(Sphere s){
 void soundManipulation(Sphere s, int dist){
   // turn off
   if (dist < s.radius) {
-    s.vol.setVal(map(dist, 0, s.radius, s.vol.getMin(), s.vol.getMax()), millisToFadeInside);   // shift over 100 millis
+    s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis
     for (Sphere sp : spheres){
       if (s.getId() != sp.getId() && s.getGroup() == sp.getGroup()){
         sp.vol.setVal(s.vol.getVal(), millisToFadeInside);
       }
     }
   }
-  else s.vol.setVal(s.vol.getMax(), millisToFadeOutside); // shift to min over 100 milllis 
+  else s.vol.setVal(s.vol.getMin(), millisToFadeOutside); // shift to min over 100 milllis 
   //s.track.amp(s.vol.getVal());
   
 }

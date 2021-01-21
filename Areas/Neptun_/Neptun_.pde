@@ -15,7 +15,7 @@ Delay [] delays;
 
 boolean simulate = false;
 int millisToFadeInside = 300;
-int millisToFadeOutside = 300;
+int millisToFadeOutside = 2000;
 int millisToFadeNoBlobs = 5000;
 
 void setup() {
@@ -46,8 +46,22 @@ void setup() {
   
   for (int i = 0; i < delays.length; i++){
     delays[i] = new Delay(this);
-    delays[i].process(spheres[i].track, 0.8); // second value is the default "tape" the delay has
   }
+  
+  delays[0].process(spheres[0].track, 0.1); // second value is the default "tape" the delay has
+  delays[1].process(spheres[1].track, 0.2); // second value is the default "tape" the delay has
+  delays[2].process(spheres[2].track, 0.3); // second value is the default "tape" the delay has
+  delays[3].process(spheres[3].track, 0.4); // second value is the default "tape" the delay has
+  delays[4].process(spheres[4].track, 0.5); // second value is the default "tape" the delay has
+  delays[5].process(spheres[5].track, 0.6); // second value is the default "tape" the delay has
+  delays[6].process(spheres[6].track, 0.7); // second value is the default "tape" the delay has
+  delays[7].process(spheres[7].track, 0.8); // second value is the default "tape" the delay has
+  delays[8].process(spheres[8].track, 0.9); // second value is the default "tape" the delay has
+  
+  /*for (int i = 0; i < delays.length; i++){
+    delays[i] = new Delay(this);
+    delays[i].process(spheres[i].track, 0.8); // second value is the default "tape" the delay has
+  }*/
 }
 
 
@@ -130,7 +144,7 @@ void soundManipulation(Sphere s, int dist) {
   // turn off
   if (dist < s.radius) s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis 
   else s.vol.setVal(0, millisToFadeOutside); // shift to min over 100 milllis
-  delays[s.getId()-1].feedback(map(s.vol.getVal(), 0, 1, 0.0, 0.8));
+  delays[s.getId()-1].feedback(map(s.vol.getVal(), 0, 1, 0.3, 0.8));
   //delays[s.getId()-1].feedback(0.5);
   //delays[s.getId()-1].time(map(s.vol.getVal(), 0, 1, 0.0, 2.0));
 }
