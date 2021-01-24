@@ -4,7 +4,7 @@
 5.0
 true
 ignore areas:
-0
+2
 500
 localhost,12345,6789
 false
