@@ -8,6 +8,7 @@ import processing.sound.*;
 OscP5 oscP5;
 Blob [] blobs;
 int framesSinceLastOscMessage = 0;
+boolean debug = false;
 
 Sphere [] spheres;
 
@@ -57,17 +58,17 @@ void draw() {
 
 
 void oscEvent(OscMessage theOscMessage) {
-  println("--- OSC MESSAGE RECEIVED ---");
+  if (debug) println("--- OSC MESSAGE RECEIVED ---");
   // Check if the address pattern is the right one
   if(theOscMessage.checkAddrPattern("/Blobs|X|Y|MIN_DEPTH|ID|NR_OF_PIXELS|")==true) {
-    println("AddressPattern matched:", theOscMessage.addrPattern());
+    if (debug)  println("AddressPattern matched:", theOscMessage.addrPattern());
     // check if the typetag is the right one
     String typeTag = "";
     for (int i = 0; i < theOscMessage.typetag().length(); i++) typeTag += "i";
     if(theOscMessage.checkTypetag(typeTag)) {
-      println("TypeTag matched:", theOscMessage.typetag());
+      if (debug)  println("TypeTag matched:", theOscMessage.typetag());
       blobs = new Blob[theOscMessage.typetag().length()/5];
-      println("Blobs length: ", blobs.length);
+      if (debug) println("Blobs length: ", blobs.length);
       for (int i = 0, j = 0; i <= theOscMessage.typetag().length()-5; i+=5, j++){
         int x, y, blobMinDepth, id, nrOfPixels__;
         x = theOscMessage.get(i).intValue();
@@ -77,13 +78,13 @@ void oscEvent(OscMessage theOscMessage) {
         nrOfPixels__ = theOscMessage.get(i+4).intValue();
         
         blobs[j] = new Blob(x, y, blobMinDepth, id, nrOfPixels__);
-        println("X: ", x, "Y: ", y, "Min Depth", blobMinDepth, "ID: ", id, "Pixels: ", nrOfPixels__);
+        if (debug) println("X: ", x, "Y: ", y, "Min Depth", blobMinDepth, "ID: ", id, "Pixels: ", nrOfPixels__);
       }
       framesSinceLastOscMessage = 0;
     }
   }
-  println("----------------------------");
-  println();
+  if (debug) println("----------------------------");
+  if (debug) println();
 
 }
 
@@ -130,4 +131,5 @@ void soundManipulation(Sphere s, int dist){
 // key for toggling mouse simulation
 void keyPressed(){
   if (key == 's') simulate = !simulate;
+  if (key == 'd') debug = !debug;
 }
