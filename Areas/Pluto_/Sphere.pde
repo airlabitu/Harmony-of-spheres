@@ -12,7 +12,7 @@ class Sphere{
     radius = radius_;
     track = new SoundFile(pa, filename);
     vol = new ValueFader();
-    vol.setMinMax(0,1);
+    vol.setMinMax(0.00001,1); // min val set above 0 to prevent library warnings
   }
   
   void update(){
