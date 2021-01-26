@@ -313,7 +313,7 @@ void mouseDragged() {
 
 void mouseReleased() {
   if (mouseButton == LEFT){
-    if (inputMode == 1) t.setTrackColor(webCam.get(mouseX, mouseY));
+    if (inputMode == 1 && webcamDetected) t.setTrackColor(webCam.get(mouseX, mouseY));
     if (dragState == 1 && dist(pressX, pressY, releaseX, releaseY) > 5) {
       t.addIgnoreArea(pressX, pressY, int(dist(pressX, pressY, releaseX, releaseY)));
       //t.ignoreAreas.add(new Area(pressX, pressY, int(dist(pressX, pressY, releaseX, releaseY)))); // move inside tracker class
@@ -372,9 +372,8 @@ void setInputMode(int mode){
     String[] cameras = Capture.list();
     if (debug) println("Available cameras:");
     if (debug) printArray(cameras);
-    if (cameras == null) println("cameras null");
     println("cameras.length:", cameras.length);
-    //if (cameras.length < 1) webcamDetected = false;
+    if (cameras.length > 0) webcamDetected = true;
     if (webcamDetected){
       webCam = new Capture(this, 640, 480, cameras[0]);
       webCam.start();
