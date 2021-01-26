@@ -113,9 +113,6 @@ void draw() {
           t.detectBlobs(webCam);
         }
       }
-      else {
-        errorString = "No webcam avaliable";
-      }
     }
     else if (inputMode == 2 && !disableSimulation) t.detectBlobs(simulationVideo);
     
@@ -124,6 +121,10 @@ void draw() {
     if (disableSimulation && inputMode == 2) {
       background(255,0,0);
       errorString = "Simulation disabled";
+    }
+    else if (!webcamDetected && inputMode == 1){
+      background(255,0,0);
+      errorString = "No webcam avaliable";
     }
     else {
       image(t.getTrackerImage(), 0, 0); // display the image from the tracker
