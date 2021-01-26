@@ -140,7 +140,7 @@ class Tracker{
   
     // There are no blobs!
     if (blobs.isEmpty() && currentBlobs.size() > 0) {
-      println("Adding blobs!");
+      if (debug) println("Adding blobs!");
       for (Blob b : currentBlobs) {
         b.id = blobCounter;
         blobs.add(b);

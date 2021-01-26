@@ -1,5 +1,5 @@
 10
-1010
+900
 40.0
 5.0
 true
@@ -7,4 +7,6 @@ ignore areas:
 2
 500
 localhost,12345,6789
+false
+mix.mp4
 true

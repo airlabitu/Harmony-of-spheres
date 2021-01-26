@@ -364,7 +364,9 @@ void setInputMode(int mode){
 }
 
 void loadSimulationVideo(){
-  simulationVideo = new Movie(this, simulationVideoFile);
-  simulationVideo.loop();
-  t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
+  if (simulationEnabled){
+    simulationVideo = new Movie(this, simulationVideoFile);
+    simulationVideo.loop();
+    t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
+  }
 }

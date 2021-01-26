@@ -10,6 +10,8 @@
 // ToDo
   // Tjek og implementer bedre performance - e.g. clear video/kinect/video objekter efter mode change
   // Test med Kinect 
+  // add simulationEnabled to settings
+  // fix crash error when no webcam is avalliable
 
 import processing.video.*;
 import org.openkinect.freenect.*;
@@ -32,6 +34,7 @@ boolean logsEnabled = true;
 boolean exit_on_kinect_error = true;
 int noKinectFrameCount;
 boolean kinectConnectedStateLastFrame;
+boolean simulationEnabled = false;
 
 void setup() {
   size(640, 480);
@@ -89,13 +92,14 @@ void draw() {
       errorString = "No webcam avaliable";
     }
   }
-  else if (inputMode == 2) t.detectBlobs(simulationVideo);
+  else if (inputMode == 2 && simulationEnabled) t.detectBlobs(simulationVideo);
   
   if (sendingOSC && t.getNrOfBlobs() > 0) sendBlobsOsc(); // send blobs over OSC if there is any blobs to send
   
-  image(t.getTrackerImage(), 0, 0); // display the image from the tracker
+  if (inputMode == 2 && !simulationEnabled) background(255, 0, 0); // draw red background if simulation is disabled
+  else image(t.getTrackerImage(), 0, 0); // display the image from the tracker
 
-  if (drawBlobs) t.showBlobs(/*true*/); // display tracked blobs
+  t.showBlobs(/*true*/); // display tracked blobs
   drawInfo(); // on screen text info
  
   if (mousePressed && mouseButton == LEFT) showIgnoreCircle();

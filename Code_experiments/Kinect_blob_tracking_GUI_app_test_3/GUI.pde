@@ -1,10 +1,11 @@
-int inputMode = 1; // 0 = kinect | 1 = webCam | 2 = video file simulation 
+int inputMode = 1; // 0 = kinect | 1 = webCam | 2 = video file simulation   // // set in settings file & UI
 
-boolean textInfo = true;
-boolean drawBlobs = true;
-boolean sendingOSC = false;
+boolean textInfo = true; // only set in code
+boolean drawBlobs = true; // set in settings file & UI
+boolean sendingOSC = false; // set in settings file & UI
+boolean disableSimulation = false; // set in settings file
 
-String simulationVideoFile;
+String simulationVideoFile; // set in settings file & UI
 
 // IGNORE AREAS
 int pressX, pressY;
@@ -14,7 +15,7 @@ int dragState = -1;
 boolean loading = false; // load settings flag
 
 String errorString = "";
-boolean debug = true;
+
 
 
 void drawInfo() {
@@ -156,6 +157,9 @@ void saveSettingsCallback(File selection) {
     settings[9] = ""+sendingOSC;
     settings[10] = simulationVideoFile;
     settings[11] = ""+t.getNestedBlobFilter();
+    settings[12] = ""+disableSimulation;
+    settings[13] = ""+exit_on_kinect_error;
+    settings[14] = ""+logsEnabled;
     saveStrings(selection.getAbsolutePath(), settings);
   }
 }
@@ -212,8 +216,12 @@ void loadSettings(String path) {
   myRemoteLocation = new NetAddress(oscInfo[0], int(oscInfo[2]));
   sendingOSC = boolean(settings[9]);
   simulationVideoFile = settings[10];
-  loadSimulationVideo();
+  //loadSimulationVideo();
+  setInputMode(inputMode);
   t.setNestedBlobFilter(boolean(settings[11]));
+  disableSimulation = boolean(settings[12]);
+  exit_on_kinect_error = boolean(settings[13]);
+  logsEnabled = boolean(settings[14]);
   loading = false; // flag loading process done
   
 }
@@ -333,38 +341,60 @@ void setInputMode(int mode){
   if (kinect != null){
     if (kinect.numDevices() != 0) {
       kinect.stopDepth();
-      //kinect = null;
-      //kinect.enableColorDepth(false);
-      //kinect.enableIR(false);
     }
   }
   if (webCam != null) webCam.stop();
   if (simulationVideo != null) simulationVideo.stop();
   //kinect = null;
   if (mode == 0) {
+    kinectFrameZero = 0; // reset frame zero to detect if kinect boots up correctly
+    if (debug) println("Starting kinect");
+    if (logsEnabled) log("Starting kinect", logFile);
     if (kinect == null) kinect = new Kinect(this);
     if (kinect.numDevices() > 0) {
       kinect.initDepth();
       if (debug) println("Initiating kinect depth: kinect.initDepth()");
+      if (logsEnabled) log("Initiating kinect depth: kinect.initDepth()", logFile);
     }
-    else if (debug) println("Kinect number of devices 0 or less");
-    if (kinect == null && debug) println("Kinect null");
+    else {
+      if (debug) println("Kinect number of devices 0 or less");
+      if (logsEnabled) log("Kinect number of devices 0 or less", logFile);
+    }
+    if (kinect == null) {
+      if (logsEnabled) log("Kinect null", logFile);
+      if (debug) println("Kinect null");
+    }
     t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
   } 
   else if (mode == 1) {
+    if (debug) println("Starting webcam");
+    if (logsEnabled) log("Starting webcam", logFile);
     String[] cameras = Capture.list();
-    println("Available cameras:");
-    printArray(cameras);
-    webCam = new Capture(this, 640, 480, cameras[0]);
-    webCam.start();
+    if (debug) println("Available cameras:");
+    if (debug) printArray(cameras);
+    if (cameras == null) println("cameras null");
+    println("cameras.length:", cameras.length);
+    //if (cameras.length < 1) webcamDetected = false;
+    if (webcamDetected){
+      webCam = new Capture(this, 640, 480, cameras[0]);
+      webCam.start();
+    }
   } 
   else if (mode == 2) {
+    if (debug) println("Starting video simulation");
+    if (logsEnabled) log("Starting video simulation", logFile);
     loadSimulationVideo();
   }
 }
 
 void loadSimulationVideo(){
-  simulationVideo = new Movie(this, simulationVideoFile);
-  simulationVideo.loop();
-  t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
+  if (!disableSimulation){
+    simulationVideo = new Movie(this, simulationVideoFile);
+    simulationVideo.loop();
+    t.setTrackColor(color(255)); // set tcack color back to white, in case it was changed by user in webcam input mode
+  }
+  else {
+    if (debug) println("Video simulation disabled");
+    if (logsEnabled) log("Video simullation disabled", logFile);
+  }
 }
