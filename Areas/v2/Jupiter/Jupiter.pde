@@ -23,16 +23,16 @@ void setup() {
   oscP5 = new OscP5(this, 6789);
   spheres = new Sphere [9];
 
-  // turn off sounds
-  spheres[0] = new Sphere(100, 100, 75, "1.wav", this, 1, 2);
+  // create spheres
+  spheres[0] = new Sphere(100, 100, 125, "1.wav", this, 1, 2);
   spheres[1] = new Sphere(300, 100, 75, "2.wav", this, 2, 4);
-  spheres[2] = new Sphere(500, 100, 75, "3.wav", this, 3, 3);
-  spheres[3] = new Sphere(100, 250, 75, "4.wav", this, 4, 3);
-  spheres[4] = new Sphere(300, 250, 75, "5.wav", this, 5, 1);
+  spheres[2] = new Sphere(500, 100, 100, "3.wav", this, 3, 3);
+  spheres[3] = new Sphere(100, 250, 100, "4.wav", this, 4, 3);
+  spheres[4] = new Sphere(300, 250, 175, "5.wav", this, 5, 1);
   spheres[5] = new Sphere(500, 250, 75, "6.wav", this, 6, 4);
   spheres[6] = new Sphere(100, 400, 75, "7.wav", this, 7, 4);
-  spheres[7] = new Sphere(300, 400, 75, "8.wav", this, 8, 3);
-  spheres[8] = new Sphere(500, 400, 75, "9.wav", this, 9, 2);
+  spheres[7] = new Sphere(300, 400, 100, "8.wav", this, 8, 3);
+  spheres[8] = new Sphere(500, 400, 125, "9.wav", this, 9, 2);
 
   for (Sphere s : spheres) {
     s.track.loop();
@@ -142,7 +142,7 @@ void soundManipulation(Sphere s, int dist) {
       s.envelope.update(position); // (a) set random or interactive cue point 
       //s.envelope.update(); // (b) set regular cue (follows time) 
     }
-    if (s.rateEnabled) s.rate.setVal(map(dist, 0, s.radius, s.rate.getMin(), s.rate.getMax()), millisToFadeInside); 
+    if (s.rateEnabled) s.rate.setVal(map(dist, 0, s.radius, s.rate.getMax(), s.rate.getMin()), millisToFadeInside); 
   }
   else {
     s.vol.setVal(s.vol.getMin(), millisToFadeOutside); // shift to min

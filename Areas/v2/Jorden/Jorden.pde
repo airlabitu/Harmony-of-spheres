@@ -43,6 +43,7 @@ void setup() {
     //s.enableEnvelope(this); // ###envelope
     s.enableRate(); // ### rate
     s.rate.setMinMax(0.92, 1.0);
+    //s.rate.reverse(true);    
     
     if (s.delayEnabled) s.delayVal.setVal(s.delayVal.getMin(), millisToFadeOutside);
     
@@ -133,9 +134,17 @@ void soundManipulation(Sphere s, int dist) {
   if (dist < s.radius) {
     s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis
     for (Sphere sp : spheres){ // groups
-      if (s.getId() != sp.getId() && s.getGroup() == sp.getGroup()){
+      if (s.getId() == 5){
+        if (s.getId() != sp.getId()){
+          sp.vol.setVal(s.vol.getVal(), millisToFadeInside);
+          if (sp.rateEnabled) sp.rate.setVal(map(dist, 0, sp.radius, sp.rate.getMax(), sp.rate.getMin()), millisToFadeInside); 
+        
+        }
+      }
+      
+      else if (s.getId() != sp.getId() && s.getGroup() == sp.getGroup()){
         sp.vol.setVal(s.vol.getVal(), millisToFadeInside);
-        if (sp.rateEnabled) sp.rate.setVal(map(dist, 0, sp.radius, sp.rate.getMin(), sp.rate.getMax()), millisToFadeInside); 
+        if (sp.rateEnabled) sp.rate.setVal(map(dist, 0, sp.radius, sp.rate.getMax(), sp.rate.getMin()), millisToFadeInside); 
         
       }
     }
@@ -148,7 +157,7 @@ void soundManipulation(Sphere s, int dist) {
       s.envelope.update(position); // (a) set random or interactive cue point 
       //s.envelope.update(); // (b) set regular cue (follows time) 
     }
-    if (s.rateEnabled) s.rate.setVal(map(dist, 0, s.radius, s.rate.getMin(), s.rate.getMax()), millisToFadeInside); 
+    if (s.rateEnabled) s.rate.setVal(map(dist, 0, s.radius, s.rate.getMax(), s.rate.getMin()), millisToFadeInside); 
   }
   else {
     s.vol.setVal(s.vol.getMin(), millisToFadeOutside); // shift to min

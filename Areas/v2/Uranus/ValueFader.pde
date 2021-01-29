@@ -7,11 +7,17 @@ class ValueFader{
   float increment;
   float targetVal;
   float lastTargetVal;
+  boolean reverse;
     
   void setVal(float targetVal_, float fadeTime){
+    
+    // prevent exponentiel fade 
     if (lastTargetVal == targetVal_) return;
-    targetVal = targetVal_;
-    lastTargetVal = targetVal;
+    lastTargetVal = targetVal_;
+    
+    // reverse
+    targetVal = constrain(targetVal_, minVal, maxVal);
+    if (reverse) targetVal = map(targetVal, minVal, maxVal, maxVal, minVal);
     
     // prevents division by zero
     if (frameRate == 0) frameRate = 1;
@@ -36,6 +42,11 @@ class ValueFader{
   
   float getMax(){
     return maxVal;
+  }
+  
+  void reverse(boolean r_){
+    reverse = r_;
+    setVal(getVal(),1);
   }
 
   void setMinMax(float minVal_, float maxVal_){
