@@ -31,25 +31,25 @@ void setup() {
   spheresFX = new Sphere [9];
   
   // create spheres
-  spheresFX[0] = new Sphere(100, 100, 125, "with_fx/1.wav", this, 1, 2);
+  spheresFX[0] = new Sphere(500, 100, 125, "with_fx/1.wav", this, 1, 2);
   spheresFX[1] = new Sphere(300, 100, 75, "with_fx/2.wav", this, 2, 4);
-  spheresFX[2] = new Sphere(500, 100, 100, "with_fx/3.wav", this, 3, 3);
-  spheresFX[3] = new Sphere(100, 250, 100, "with_fx/4.wav", this, 4, 3);
+  spheresFX[2] = new Sphere(100, 100, 100, "with_fx/3.wav", this, 3, 3);
+  spheresFX[3] = new Sphere(500, 250, 100, "with_fx/4.wav", this, 4, 3);
   spheresFX[4] = new Sphere(300, 250, 175, "with_fx/5.wav", this, 5, 1);
-  spheresFX[5] = new Sphere(500, 250, 75, "with_fx/6.wav", this, 6, 4);
-  spheresFX[6] = new Sphere(100, 400, 75, "with_fx/7.wav", this, 7, 4);
+  spheresFX[5] = new Sphere(100, 250, 75, "with_fx/6.wav", this, 6, 4);
+  spheresFX[6] = new Sphere(500, 400, 75, "with_fx/7.wav", this, 7, 4);
   spheresFX[7] = new Sphere(300, 400, 100, "with_fx/8.wav", this, 8, 3);
-  spheresFX[8] = new Sphere(500, 400, 125, "with_fx/9.wav", this, 9, 2);
+  spheresFX[8] = new Sphere(100, 400, 125, "with_fx/9.wav", this, 9, 2);
   
-  spheresClean[0] = new Sphere(100, 100, 125, "without_fx/1.wav", this, 1, 2);
+  spheresClean[0] = new Sphere(500, 100, 125, "without_fx/1.wav", this, 1, 2);
   spheresClean[1] = new Sphere(300, 100, 75, "without_fx/2.wav", this, 2, 4);
-  spheresClean[2] = new Sphere(500, 100, 100, "without_fx/3.wav", this, 3, 3);
-  spheresClean[3] = new Sphere(100, 250, 100, "without_fx/4.wav", this, 4, 3);
+  spheresClean[2] = new Sphere(100, 100, 100, "without_fx/3.wav", this, 3, 3);
+  spheresClean[3] = new Sphere(500, 250, 100, "without_fx/4.wav", this, 4, 3);
   spheresClean[4] = new Sphere(300, 250, 175, "without_fx/5.wav", this, 5, 1);
-  spheresClean[5] = new Sphere(500, 250, 75, "without_fx/6.wav", this, 6, 4);
-  spheresClean[6] = new Sphere(100, 400, 75, "without_fx/7.wav", this, 7, 4);
+  spheresClean[5] = new Sphere(100, 250, 75, "without_fx/6.wav", this, 6, 4);
+  spheresClean[6] = new Sphere(500, 400, 75, "without_fx/7.wav", this, 7, 4);
   spheresClean[7] = new Sphere(300, 400, 100, "without_fx/8.wav", this, 8, 3);
-  spheresClean[8] = new Sphere(500, 400, 125, "without_fx/9.wav", this, 9, 2);
+  spheresClean[8] = new Sphere(100, 400, 125, "without_fx/9.wav", this, 9, 2);
   
   
   // prevent text overlap

@@ -47,7 +47,7 @@ void setup() {
     //s.enableDelay(this, 0.3); // 0.3 is the delay tape // ###delay
     s.enableRate(); // ### rate
     //s.rate.setMinMax(0.92, 1.0);
-    s.rate.reverse(true);    
+    //s.rate.reverse(true);    
     
     if (s.delayEnabled) s.delayVal.setVal(s.delayVal.getMin(), millisToFadeOutside);
   

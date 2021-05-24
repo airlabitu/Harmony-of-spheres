@@ -29,15 +29,15 @@ void setup() {
   spheres = new Sphere [9];
 
   // turn off sounds
-  spheres[0] = new Sphere(100, 100, 75, "1.wav", this, 1, 2);
+  spheres[0] = new Sphere(500, 100, 75, "1.wav", this, 1, 2);
   spheres[1] = new Sphere(300, 100, 75, "2.wav", this, 2, 4);
-  spheres[2] = new Sphere(500, 100, 75, "3.wav", this, 3, 3);
-  spheres[3] = new Sphere(100, 250, 75, "4.wav", this, 4, 3);
+  spheres[2] = new Sphere(100, 100, 75, "3.wav", this, 3, 3);
+  spheres[3] = new Sphere(500, 250, 75, "4.wav", this, 4, 3);
   spheres[4] = new Sphere(300, 250, 75, "5.wav", this, 5, 1);
-  spheres[5] = new Sphere(500, 250, 75, "6.wav", this, 6, 4);
-  spheres[6] = new Sphere(100, 400, 75, "7.wav", this, 7, 4);
+  spheres[5] = new Sphere(100, 250, 75, "6.wav", this, 6, 4);
+  spheres[6] = new Sphere(500, 400, 75, "7.wav", this, 7, 4);
   spheres[7] = new Sphere(300, 400, 75, "8.wav", this, 8, 3);
-  spheres[8] = new Sphere(500, 400, 75, "9.wav", this, 9, 2);
+  spheres[8] = new Sphere(100, 400, 75, "9.wav", this, 9, 2);
 
   for (Sphere s : spheres) {
     s.track.loop();

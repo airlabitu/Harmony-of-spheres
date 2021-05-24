@@ -61,7 +61,7 @@ class Sphere{
     if (rateEnabled) text("Rate: " + nf(rate.getVal(), 0, 2), x+xMove, y-30+yMove);
     if (delayEnabled) text("Delay: " + nf(delayVal.getVal(), 0, 2), x+xMove, y-15+yMove);
     text("Vol: " + nf(vol.getVal(), 0, 2), x+xMove, y+yMove);
-    //text("ID: " + id, x+xMove-30, y+30+yMove);    
+    text("ID: " + id, x+xMove-30, y+30+yMove);    
     //text("Group: " + group, x+xMove+30, y+30+yMove); 
   
   }
