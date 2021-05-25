@@ -61,15 +61,17 @@ void blobsInteraction(Sphere s, Sphere [] s_array, String type) {
 
 void soundManipulation(Sphere s, Sphere [] s_array, int dist, String type) {
   // turn off
-  float center = 0.2;
+float borderOne = 0.6; // border where sinus fade is ended
+  float borderTwo = 0.3; // border where the linear fade is at a max
+  noFill();
   if (type.equals("SINUS_FADE")){
-    noFill();
-    circle(s.x, s.y, (s.radius*center)*2);
+    circle(s.x, s.y, (s.radius*borderOne)*2);
   }
+  circle(s.x, s.y, (s.radius*borderTwo)*2);
   if (dist < s.radius) {
     // control sphere 's'
-    if (type.equals("SINUS_FADE")) s.vol.setVal(sin(map(constrain(dist, s.radius*center, s.radius), s.radius*center, s.radius, 0, PI))*s.vol.getMax(), millisToFadeInside);   // shift over 100 millis      
-    else if (type.equals("LINEAR_FADE")) s.vol.setVal(map(dist, 0, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis
+    if (type.equals("SINUS_FADE")) s.vol.setVal(sin(map(constrain(dist, s.radius*borderOne, s.radius), s.radius*borderOne, s.radius, 0, PI))*s.vol.getMax(), millisToFadeInside);   // shift over 100 millis      
+    else if (type.equals("LINEAR_FADE")) s.vol.setVal(map(constrain(dist, s.radius*borderTwo, s.radius), s.radius*borderTwo, s.radius, s.vol.getMax(), s.vol.getMin()), millisToFadeInside);   // shift over 100 millis
     
     // GROUPS
     if (groupsEnabled){
@@ -78,20 +80,20 @@ void soundManipulation(Sphere s, Sphere [] s_array, int dist, String type) {
         if (s.getId() == 5){
           if (s.getId() != sp.getId()){
             sp.vol.setVal(s.vol.getVal(), millisToFadeInside);
-            if (sp.rateEnabled) sp.rate.setVal(map(dist, 0, sp.radius, sp.rate.getMax(), sp.rate.getMin()), millisToFadeInside); 
+            if (sp.rateEnabled) sp.rate.setVal(map(constrain(dist, s.radius*borderTwo, s.radius), s.radius*borderTwo, sp.radius, sp.rate.getMax(), sp.rate.getMin()), millisToFadeInside); 
           }
         }
         // control all in group with sphere 's' like it
         else if (s.getId() != sp.getId() && s.getGroup() == sp.getGroup()){
           sp.vol.setVal(s.vol.getVal(), millisToFadeInside);
-          if (sp.rateEnabled) sp.rate.setVal(map(dist, 0, sp.radius, sp.rate.getMax(), sp.rate.getMin()), millisToFadeInside); 
+          if (sp.rateEnabled) sp.rate.setVal(map(constrain(dist, s.radius*borderTwo, s.radius), s.radius*borderTwo, sp.radius, sp.rate.getMax(), sp.rate.getMin()), millisToFadeInside); 
           
         }
       }
     }
     
     //if (s.delayEnabled) s.delayVal.setVal(map(dist, 0, s.radius, s.delayVal.getMax(), s.delayVal.getMin()), millisToFadeInside);
-    if (s.rateEnabled) s.rate.setVal(map(dist, 0, s.radius, s.rate.getMax(), s.rate.getMin()), millisToFadeInside); 
+    if (s.rateEnabled) s.rate.setVal(map(constrain(dist, s.radius*borderTwo, s.radius), s.radius*borderTwo, s.radius, s.rate.getMax(), s.rate.getMin()), millisToFadeInside); 
   }
   else {
     s.vol.setVal(s.vol.getMin(), millisToFadeOutside); // shift to min

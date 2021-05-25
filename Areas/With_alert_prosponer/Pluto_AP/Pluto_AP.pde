@@ -13,7 +13,7 @@ Sphere [] spheres;
 
 boolean simulate = false;
 int millisToFadeInside = 300;
-int millisToFadeOutside = 2000;
+int millisToFadeOutside = 1000;
 int millisToFadeNoBlobs = 5000;
 
 boolean groupsEnabled = false;
@@ -29,15 +29,15 @@ void setup() {
   spheres = new Sphere [9];
 
   // turn off sounds
-  spheres[0] = new Sphere(100, 100, 125, "1.wav", this, 1, 2);
-  spheres[1] = new Sphere(300, 100, 75, "2.wav", this, 2, 4);
-  spheres[2] = new Sphere(500, 100, 100, "3.wav", this, 3, 3);
-  spheres[3] = new Sphere(100, 250, 100, "4.wav", this, 4, 3);
-  spheres[4] = new Sphere(300, 250, 175, "5.wav", this, 5, 1);
-  spheres[5] = new Sphere(500, 250, 75, "6.wav", this, 6, 4);
-  spheres[6] = new Sphere(100, 400, 75, "7.wav", this, 7, 4);
-  spheres[7] = new Sphere(300, 400, 100, "8.wav", this, 8, 3);
-  spheres[8] = new Sphere(500, 400, 125, "9.wav", this, 9, 2);
+  spheres[0] = new Sphere(489, 93, 90, "1.wav", this, 1, 2);
+  spheres[1] = new Sphere(319, 104, 90, "2.wav", this, 2, 4);
+  spheres[2] = new Sphere(143, 98, 90, "3.wav", this, 3, 3);
+  spheres[3] = new Sphere(489, 250, 90, "4.wav", this, 4, 3);
+  spheres[4] = new Sphere(321, 250, 90, "5.wav", this, 5, 1);
+  spheres[5] = new Sphere(147, 255, 90, "6.wav", this, 6, 4);
+  spheres[6] = new Sphere(500, 407, 90, "7.wav", this, 7, 4);
+  spheres[7] = new Sphere(325, 410, 90, "8.wav", this, 8, 3);
+  spheres[8] = new Sphere(149, 408, 90, "9.wav", this, 9, 2);
 
   for (Sphere s : spheres) {
     s.track.loop();
