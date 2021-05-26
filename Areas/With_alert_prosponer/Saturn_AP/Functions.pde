@@ -64,9 +64,11 @@ void soundManipulation(Sphere s, Sphere [] s_array, int dist, String type) {
   float borderOne = 0.6; // border where sinus fade is ended
   float borderTwo = 0.3; // border where the linear fade is at a max
   noFill();
+  
   if (type.equals("SINUS_FADE")){
     circle(s.x, s.y, (s.radius*borderOne)*2);
   }
+  else println("S MAX:", s.vol.getMax(), "Vol", nf(s.vol.getVal()), 3);
   circle(s.x, s.y, (s.radius*borderTwo)*2);
   if (dist < s.radius) {
     // control sphere 's'
